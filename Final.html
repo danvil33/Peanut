@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PENATA 🪅</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4cc9f0;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success: #4caf50;
+            --danger: #f44336;
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            --card-hover-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { 
+            background: var(--bg-gradient);
+            min-height: 100vh; 
+            padding: 20px 20px 120px 20px;
+            color: var(--dark-color); 
+            overflow-x: hidden;
+        }
+        header { 
+            background: #fff; 
+            padding: 15px 25px; 
+            box-shadow: var(--card-shadow); 
+            border-radius: 12px; 
+            margin-bottom: 25px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            position: sticky; 
+            top: 20px; 
+            z-index: 100; 
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            display: none;
+        }
+        .logo { 
+            font-size: 2rem; 
+            font-weight: 700; 
+            color: var(--primary-color); 
+            letter-spacing: 1.5px; 
+            text-shadow: 0 2px 5px rgba(67, 97, 238, 0.2); 
+        }
+        .section { 
+            display: none; 
+            max-width: 700px; 
+            width: 100%; 
+            margin: 0 auto 25px auto; 
+            background: #fff; 
+            padding: 25px; 
+            border-radius: 12px; 
+            box-shadow: var(--card-shadow); 
+            transition: all 0.4s ease-in-out; 
+            text-align: center;
+        }
+        .section.active { display: block; animation: fadeInUp 0.4s ease-out; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        h1 { 
+            color: var(--primary-color); 
+            font-weight: 600; 
+            margin-bottom: 25px; 
+            text-align: center; 
+            font-size: 1.8rem; 
+            position: relative; 
+        }
+        h1::after { 
+            content: ''; 
+            position: absolute; 
+            bottom: -8px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: 60px; 
+            height: 3px; 
+            background: var(--accent-color); 
+            border-radius: 2px; 
+        }
+        .form-group { position: relative; margin-bottom: 20px; }
+        .form-control { 
+            border-radius: 8px; 
+            padding: 12px 15px; 
+            border: 1px solid #e5e7eb; 
+            width: 100%; 
+            background: #fff; 
+            transition: all 0.3s ease; 
+            font-size: 0.95rem; 
+        }
+        .form-control:focus { 
+            border-color: var(--primary-color); 
+            box-shadow: 0 0 8px rgba(67, 97, 238, 0.15); 
+            outline: none; 
+        }
+        label { 
+            position: absolute; 
+            top: 50%; 
+            left: 15px; 
+            transform: translateY(-50%); 
+            color: #6b7280; 
+            font-size: 0.9rem; 
+            transition: all 0.2s ease; 
+            pointer-events: none; 
+            background: #fff; 
+            padding: 0 6px; 
+        }
+        .form-control:focus + label, .form-control:not(:placeholder-shown) + label { 
+            top: -8px; 
+            font-size: 0.75rem; 
+            color: var(--primary-color); 
+        }
+        .btn-primary { 
+            background: var(--primary-color); 
+            border: none; 
+            border-radius: 8px; 
+            padding: 12px; 
+            color: #fff; 
+            width: 100%; 
+            font-weight: 500; 
+            text-transform: uppercase; 
+            transition: all 0.3s ease; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+            font-size: 0.95rem; 
+        }
+        .btn-primary:hover { background: var(--secondary-color); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3); }
+        .btn-primary:disabled { background: #d1d5db; cursor: not-allowed; }
+        .btn-danger { 
+            background: var(--danger); 
+            border: none; 
+            border-radius: 8px; 
+            padding: 10px 20px; 
+            color: #fff; 
+            font-weight: 500; 
+            transition: all 0.3s ease; 
+            cursor: pointer; 
+        }
+        .btn-danger:hover { background: #d32f2f; transform: translateY(-2px); }
+        .minerals-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+            gap: 30px; 
+            max-width: 1200px; 
+            margin: 40px auto 0; 
+            padding: 20px; 
+        }
+        .mineral-card { 
+            background: #fff; 
+            padding: 25px; 
+            border-radius: 15px; 
+            box-shadow: var(--card-shadow); 
+            transition: all 0.3s ease; 
+            text-align: center; 
+            position: relative; 
+            overflow: hidden; 
+            border: 2px solid rgba(67, 97, 238, 0.1); 
+        }
+        .mineral-card:hover { 
+            transform: translateY(-10px); 
+            box-shadow: var(--card-hover-shadow); 
+            border-color: var(--primary-color); 
+        }
+        .mineral-card::before { 
+            content: ''; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 8px; 
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color)); 
+            border-radius: 15px 15px 0 0; 
+            transition: height 0.3s ease; 
+        }
+        .mineral-card:hover::before { height: 12px; }
+        .mineral-name { 
+            font-size: 1.5rem; 
+            color: var(--primary-color); 
+            font-weight: 600; 
+            margin-top: 15px; 
+            margin-bottom: 12px; 
+        }
+        .mineral-price { 
+            font-size: 1rem; 
+            color: #555; 
+            background: var(--light-color); 
+            padding: 8px 15px; 
+            border-radius: 6px; 
+            margin-bottom: 15px; 
+            display: inline-block; 
+        }
+        .mineral-return { 
+            color: var(--success); 
+            font-weight: 500; 
+            padding: 8px 15px; 
+            border-radius: 6px; 
+            background: rgba(76, 175, 80, 0.15); 
+            margin-bottom: 20px; 
+            display: block; 
+            font-size: 0.95rem; 
+        }
+        .address-box { 
+            background: var(--light-color); 
+            padding: 15px; 
+            border-radius: 10px; 
+            text-align: center; 
+            margin-bottom: 20px; 
+            font-weight: 500; 
+            word-break: break-all; 
+            font-size: 0.9rem; 
+        }
+        .balance-amount { 
+            font-size: 2.2rem; 
+            color: var(--primary-color); 
+            background: rgba(67, 97, 238, 0.1); 
+            padding: 15px; 
+            border-radius: 10px; 
+            margin-bottom: 20px; 
+            text-align: center; 
+            font-weight: 600; 
+        }
+        .history { 
+            background: var(--light-color); 
+            padding: 15px; 
+            border-radius: 10px; 
+            margin-top: 20px; 
+        }
+        .history h3 { 
+            font-size: 1.2rem; 
+            color: var(--primary-color); 
+            margin-bottom: 15px; 
+            font-weight: 600; 
+        }
+        .history-item { 
+            background: #fff; 
+            padding: 12px; 
+            border-radius: 8px; 
+            margin-bottom: 10px; 
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); 
+            font-size: 0.9rem; 
+            line-height: 1.5; 
+        }
+        .history-item span { font-weight: 500; color: #333; }
+        .history-item .status-pending { color: #f59e0b; font-weight: 500; }
+        .history-item .status-approved { color: var(--success); font-weight: 500; }
+        .history-item .status-rejected { color: var(--danger); font-weight: 500; }
+        .footer-nav { 
+            position: fixed; 
+            bottom: 20px; 
+            width: calc(100% - 40px); 
+            max-width: 600px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            background: #fff; 
+            display: flex; 
+            justify-content: space-around; 
+            padding: 10px; 
+            box-shadow: var(--card-shadow); 
+            border-radius: 12px; 
+            z-index: 100; 
+        }
+        .nav-item { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            color: #6b7280; 
+            cursor: pointer; 
+            padding: 8px 12px; 
+            transition: all 0.3s ease; 
+            border-radius: 8px; 
+        }
+        .nav-item:hover { color: var(--primary-color); background: rgba(67, 97, 238, 0.05); }
+        .nav-item.active { color: var(--primary-color); background: rgba(67, 97, 238, 0.1); }
+        .nav-icon { font-size: 1.3rem; margin-bottom: 4px; }
+        .nav-text { font-size: 0.85rem; font-weight: 500; }
+        .link { text-align: center; margin-top: 20px; }
+        .link a { color: var(--primary-color); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
+        .link a:hover { text-decoration: underline; color: var(--secondary-color); }
+        .loader { display: none; width: 18px; height: 18px; border: 3px solid rgba(255, 255, 255, 0.3); border-top-color: #fff; border-radius: 50%; animation: spin 1s infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .dashboard-info { 
+            text-align: center; 
+            margin: 20px 0; 
+            max-width: 800px; 
+            margin-left: auto; 
+            margin-right: auto; 
+            padding: 15px; 
+            background: rgba(255, 255, 255, 0.9); 
+            border-radius: 10px; 
+            box-shadow: var(--card-shadow); 
+        }
+        .dashboard-info p { 
+            font-size: 1rem; 
+            color: #444; 
+            line-height: 1.6; 
+        }
+    </style>
+</head>
+<body>
+    <header id="header">
+        <div class="logo">PENATA</div>
+    </header>
+
+    <!-- Register Section -->
+    <div id="register" class="section active">
+        <h1>Register</h1>
+        <form id="registerForm">
+            <div class="form-group">
+                <input type="text" id="regName" name="name" class="form-control" placeholder=" " required>
+                <label for="regName">Full Name</label>
+            </div>
+            <div class="form-group">
+                <input type="email" id="regEmail" name="email" class="form-control" placeholder=" " required>
+                <label for="regEmail">Email Address</label>
+            </div>
+            <div class="form-group">
+                <input type="password" id="regPassword" name="password" class="form-control" placeholder=" " required>
+                <label for="regPassword">Password</label>
+            </div>
+            <button type="submit" class="btn-primary" id="regBtn"><span class="loader" id="regLoader"></span><span id="regText">Register</span></button>
+        </form>
+        <div class="link"><a onclick="showSection('login')">Already a member? Login</a></div>
+    </div>
+
+    <!-- Login Section -->
+    <div id="login" class="section">
+        <h1>Login</h1>
+        <form id="loginForm">
+            <div class="form-group">
+                <input type="email" id="loginEmail" name="email" class="form-control" placeholder=" " required>
+                <label for="loginEmail">Email Address</label>
+            </div>
+            <div class="form-group">
+                <input type="password" id="loginPassword" name="password" class="form-control" placeholder=" " required>
+                <label for="loginPassword">Password</label>
+            </div>
+            <button type="submit" class="btn-primary" id="loginBtn"><span class="loader" id="loginLoader"></span><span id="loginText">Login</span></button>
+        </form>
+        <div class="link"><a onclick="showSection('register')">New here? Register</a></div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboard" class="section">
+        <div class="dashboard-info">
+            <p>Welcome to PENATA – Your gateway to smart mineral holding. Start growing your wealth today!</p>
+        </div>
+        <div class="minerals-grid">
+            <div class="mineral-card">
+                <div class="mineral-name">Ruby</div>
+                <div class="mineral-price">TZS 28,000 / 10 USDT</div>
+                <div class="mineral-return">Daily: TZS 5,000</div>
+                <button class="btn-primary" onclick="invest('ruby', 10)"><i class="bi bi-check-circle-fill"></i> HOLD</button>
+            </div>
+            <div class="mineral-card">
+                <div class="mineral-name">Diamond</div>
+                <div class="mineral-price">TZS 42,000 / 15 USDT</div>
+                <div class="mineral-return">Daily: TZS 7,000</div>
+                <button class="btn-primary" onclick="invest('diamond', 14)"><i class="bi bi-check-circle-fill"></i> HOLD</button>
+            </div>
+            <div class="mineral-card">
+                <div class="mineral-name">Sulphur</div>
+                <div class="mineral-price">TZS 50,000 / 18 USDT</div>
+                <div class="mineral-return">Daily: TZS 9,000</div>
+                <button class="btn-primary" onclick="invest('sulphur', 18)"><i class="bi bi-check-circle-fill"></i> HOLD</button>
+            </div>
+            <div class="mineral-card">
+                <div class="mineral-name">Iron (Small)</div>
+                <div class="mineral-price">TZS 100,000 / 36 USDT</div>
+                <div class="mineral-return">Daily: TZS 18,000</div>
+                <button class="btn-primary" onclick="invest('iron (small)', 35)"><i class="bi bi-check-circle-fill"></i> HOLD</button>
+            </div>
+            <div class="mineral-card">
+                <div class="mineral-name">Iron Gold</div>
+                <div class="mineral-price">TZS 200,000 / 72 USDT</div>
+                <div class="mineral-return">Daily: TZS 36,000</div>
+                <button class="btn-primary" onclick="invest('iron gold', 70)"><i class="bi bi-check-circle-fill"></i> HOLD</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deposit Section -->
+    <div id="deposit" class="section">
+        <h1>Deposit</h1>
+        <form id="depositForm">
+            <div class="form-group">
+                <input type="number" id="depositAmount" name="amount" class="form-control" min="1" step="0.01" placeholder=" " required>
+                <label for="depositAmount">Amount (USDT)</label>
+            </div>
+            <div class="address-box">TRC-20 Address: [Your Address Here]</div>
+            <div class="form-group">
+                <input type="text" id="transactionId" name="transactionId" class="form-control" placeholder=" " required>
+                <label for="transactionId">Transaction ID</label>
+            </div>
+            <button type="submit" class="btn-primary" id="depositBtn"><span class="loader" id="depositLoader"></span><span id="depositText">Submit Deposit</span></button>
+        </form>
+        <div class="history" id="depositHistory"></div>
+    </div>
+
+    <!-- Withdraw Section -->
+    <div id="withdraw" class="section">
+        <h1>Withdraw (Min: 6 USDT)</h1>
+        <form id="withdrawForm">
+            <div class="form-group">
+                <input type="number" id="withdrawAmount" name="amount" class="form-control" min="6" step="0.01" placeholder=" " required>
+                <label for="withdrawAmount">Amount (USDT)</label>
+            </div>
+            <div class="form-group">
+                <input type="text" id="withdrawAddress" name="address" class="form-control" placeholder=" " required>
+                <label for="withdrawAddress">TRC-20 Address</label>
+            </div>
+            <button type="submit" class="btn-primary" id="withdrawBtn"><span class="loader" id="withdrawLoader"></span><span id="withdrawText">Request Withdrawal</span></button>
+        </form>
+        <div class="history" id="withdrawHistory"></div>
+    </div>
+
+    <!-- My Account Section -->
+    <div id="my-account" class="section">
+        <h1>My Account</h1>
+        <div class="balance-amount" id="accountBalance">0.00 USDT</div>
+        <div class="history" id="planDetails"></div>
+        <button class="btn-danger" onclick="logout()" style="margin-top: 20px; width: 100%;">Logout</button>
+    </div>
+
+    <!-- Footer Navigation -->
+    <div class="footer-nav" id="footerNav" style="display: none;">
+        <div class="nav-item active" onclick="showSection('dashboard')" data-section="dashboard">
+            <i class="bi bi-house nav-icon"></i><span class="nav-text">Home</span>
+        </div>
+        <div class="nav-item" onclick="showSection('deposit')" data-section="deposit">
+            <i class="bi bi-wallet2 nav-icon"></i><span class="nav-text">Deposit</span>
+        </div>
+        <div class="nav-item" onclick="showSection('my-account')" data-section="my-account">
+            <i class="bi bi-person nav-icon"></i><span class="nav-text">My</span>
+        </div>
+        <div class="nav-item" onclick="showSection('withdraw')" data-section="withdraw">
+            <i class="bi bi-arrow-right-circle nav-icon"></i><span class="nav-text">Withdraw</span>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYiGeJ0emTTQ1ud4ClFdnuL7WHRbMCZl8i4ZdmUsec9SN-pteAR6Kd6wPVDPNhEtya/exec";
+        let email = null;
+        let balance = 0;
+        let investments = [];
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-section') === sectionId) item.classList.add('active');
+            });
+            const header = document.getElementById('header');
+            const footerNav = document.getElementById('footerNav');
+            if (sectionId === 'dashboard' || sectionId === 'deposit' || sectionId === 'withdraw' || sectionId === 'my-account') {
+                header.style.display = 'flex';
+                footerNav.style.display = 'flex';
+            } else {
+                header.style.display = 'none';
+                footerNav.style.display = 'none';
+            }
+            if (sectionId === 'my-account') updateAccountBalance();
+            if (sectionId === 'deposit') fetchDepositHistory();
+            if (sectionId === 'withdraw') fetchWithdrawHistory();
+            if (!email && sectionId !== 'register' && sectionId !== 'login') {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Please log in first!',
+                    icon: 'error',
+                    confirmButtonColor: '#4361ee'
+                }).then(() => showSection('login'));
+            }
+        }
+
+        function logout() {
+            Swal.fire({
+                title: 'Logging Out',
+                text: 'Are you sure?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#4361ee',
+                cancelButtonColor: '#f44336'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    email = null;
+                    balance = 0;
+                    investments = [];
+                    document.getElementById('footerNav').style.display = 'none';
+                    document.getElementById('header').style.display = 'none';
+                    showSection('login');
+                    Swal.fire('Logged Out', 'You have been successfully logged out.', 'success');
+                }
+            });
+        }
+
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const regBtn = document.getElementById('regBtn');
+            const regText = document.getElementById('regText');
+            const regLoader = document.getElementById('regLoader');
+            regBtn.disabled = true;
+            regText.textContent = 'Registering...';
+            regLoader.style.display = 'inline-block';
+
+            const formData = new FormData(this);
+            formData.append('action', 'register');
+            fetch(SCRIPT_URL, { method: 'POST', body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        Swal.fire('Success', 'Registration successful! Please log in.', 'success').then(() => showSection('login'));
+                        this.reset();
+                    } else {
+                        Swal.fire('Error', data.error || 'Registration failed.', 'error');
+                    }
+                })
+                .catch(error => Swal.fire('Error', 'Something went wrong.', 'error'))
+                .finally(() => {
+                    regBtn.disabled = false;
+                    regText.textContent = 'Register';
+                    regLoader.style.display = 'none';
+                });
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const loginBtn = document.getElementById('loginBtn');
+            const loginText = document.getElementById('loginText');
+            const loginLoader = document.getElementById('loginLoader');
+            loginBtn.disabled = true;
+            loginText.textContent = 'Logging in...';
+            loginLoader.style.display = 'inline-block';
+
+            const formData = new FormData(this);
+            formData.append('action', 'login');
+            fetch(SCRIPT_URL, { method: 'POST', body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        email = data.email;
+                        document.getElementById('register').style.display = 'none';
+                        document.getElementById('login').style.display = 'none';
+                        showSection('dashboard');
+                        Swal.fire('Success', 'Login successful!', 'success');
+                        this.reset();
+                    } else {
+                        Swal.fire('Error', data.error || 'Invalid email or password.', 'error');
+                    }
+                })
+                .catch(error => Swal.fire('Error', 'Something went wrong.', 'error'))
+                .finally(() => {
+                    loginBtn.disabled = false;
+                    loginText.textContent = 'Login';
+                    loginLoader.style.display = 'none';
+                });
+        });
+
+        function invest(plan, usdt) {
+            if (!email) return showSection('login');
+            if (balance < usdt) {
+                Swal.fire('Error', 'Insufficient balance. Please deposit more funds.', 'error');
+                return;
+            }
+            Swal.fire({
+                title: `Hold ${plan}`,
+                text: `Hold ${usdt} USDT in ${plan}?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#4361ee'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const dailyReturns = {
+                        'ruby': 5000 / 28000 * usdt,
+                        'diamond': 7000 / 42000 * usdt,
+                        'sulphur': 9000 / 50000 * usdt,
+                        'iron (small)': 18000 / 100000 * usdt,
+                        'iron gold': 36000 / 200000 * usdt
+                    };
+                    investments.push({ plan, amount: usdt, dailyReturn: dailyReturns[plan], startDate: new Date() });
+                    balance -= usdt;
+                    Swal.fire('Success', `Held ${usdt} USDT in ${plan}!`, 'success').then(() => updateAccountBalance());
+                }
+            });
+        }
+
+        document.getElementById('depositForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (!email) return showSection('login');
+            const depositBtn = document.getElementById('depositBtn');
+            const depositText = document.getElementById('depositText');
+            const depositLoader = document.getElementById('depositLoader');
+            depositBtn.disabled = true;
+            depositText.textContent = 'Depositing...';
+            depositLoader.style.display = 'inline-block';
+
+            const formData = new FormData(this);
+            formData.append('action', 'deposit');
+            formData.append('email', email);
+            formData.append('plan', 'none');
+            fetch(SCRIPT_URL, { method: 'POST', body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        Swal.fire('Success', 'Deposit submitted! Awaiting approval.', 'success');
+                        this.reset();
+                        fetchDepositHistory();
+                    } else {
+                        Swal.fire('Error', data.error || 'Deposit failed.', 'error');
+                    }
+                })
+                .catch(error => Swal.fire('Error', 'Something went wrong.', 'error'))
+                .finally(() => {
+                    depositBtn.disabled = false;
+                    depositText.textContent = 'Submit Deposit';
+                    depositLoader.style.display = 'none';
+                });
+        });
+
+        document.getElementById('withdrawForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (!email) return showSection('login');
+            const amount = parseFloat(document.getElementById('withdrawAmount').value);
+            if (amount < 6) {
+                Swal.fire('Error', 'Minimum withdrawal amount is 6 USDT.', 'error');
+                return;
+            }
+            if (amount > balance) {
+                Swal.fire('Error', 'Insufficient balance for withdrawal.', 'error');
+                return;
+            }
+            const withdrawBtn = document.getElementById('withdrawBtn');
+            const withdrawText = document.getElementById('withdrawText');
+            const withdrawLoader = document.getElementById('withdrawLoader');
+            withdrawBtn.disabled = true;
+            withdrawText.textContent = 'Withdrawing...';
+            withdrawLoader.style.display = 'inline-block';
+
+            const formData = new FormData(this);
+            formData.append('action', 'withdraw');
+            formData.append('email', email);
+            fetch(SCRIPT_URL, { method: 'POST', body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        Swal.fire('Success', 'Withdrawal requested! Awaiting approval.', 'success');
+                        this.reset();
+                        fetchWithdrawHistory();
+                    } else {
+                        Swal.fire('Error', data.error || 'Withdrawal failed.', 'error');
+                    }
+                })
+                .catch(error => Swal.fire('Error', 'Something went wrong.', 'error'))
+                .finally(() => {
+                    withdrawBtn.disabled = false;
+                    withdrawText.textContent = 'Request Withdrawal';
+                    withdrawLoader.style.display = 'none';
+                });
+        });
+
+        function updateAccountBalance() {
+            if (!email) return showSection('login');
+            const formData = new FormData();
+            formData.append('action', 'getBalance');
+            formData.append('email', email);
+            fetch(SCRIPT_URL, { method: 'POST', body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        balance = data.balance;
+                        document.getElementById('accountBalance').textContent = `${balance.toFixed(2)} USDT`;
+                        updatePlanDetails();
+                    } else {
+                        Swal.fire('Error', data.error || 'Failed to fetch balance.', 'error');
+                    }
+                })
+                .catch(error => Swal.fire('Error', 'Something went wrong.', 'error'));
+        }
+
+        function updatePlanDetails() {
+            const planDetails = document.getElementById('planDetails');
+            if (investments.length === 0) {
+                planDetails.innerHTML = '<h3>Your Investments</h3><p>No active investments yet.</p>';
+                return;
+            }
+            let html = '<h3>Your Investments</h3>';
+            investments.forEach(inv => {
+                const daysActive = Math.floor((new Date() - new Date(inv.startDate)) / (1000 * 60 * 60 * 24));
+                const totalIncome = daysActive * inv.dailyReturn;
+                html += `
+                    <div class="history-item">
+                        <span>Plan:</span> ${inv.plan}<br>
+                        <span>Invested:</span> ${inv.amount.toFixed(2)} USDT<br>
+                        <span>Daily Income:</span> ${inv.dailyReturn.toFixed(2)} USDT<br>
+                        <span>Total Income:</span> ${totalIncome.toFixed(2)} USDT (over ${daysActive} days)
+                    </div>
+                `;
+            });
+            planDetails.innerHTML = html;
+        }
+
+        function fetchDepositHistory() {
+            if (!email) return;
+            const formData = new FormData();
+            formData.append('action', 'getDepositHistory');
+            formData.append('email', email);
+            fetch(SCRIPT_URL, { method: 'POST', body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        const depositHistory = document.getElementById('depositHistory');
+                        let html = '<h3>Deposit History</h3>';
+                        if (data.deposits.length === 0) {
+                            html += '<p>No deposits yet.</p>';
+                        } else {
+                            data.deposits.forEach(dep => {
+                                const statusClass = dep.status.toLowerCase() === 'pending' ? 'status-pending' : 
+                                                  dep.status.toLowerCase() === 'approved' ? 'status-approved' : 'status-rejected';
+                                html += `
+                                    <div class="history-item">
+                                        <span>Amount:</span> ${dep.amount.toFixed(2)} USDT<br>
+                                        <span>Transaction ID:</span> ${dep.transactionId}<br>
+                                        <span>Status:</span> <span class="${statusClass}">${dep.status}</span><br>
+                                        <span>Date:</span> ${new Date(dep.timestamp).toLocaleString()}
+                                    </div>
+                                `;
+                            });
+                        }
+                        depositHistory.innerHTML = html;
+                    }
+                })
+                .catch(error => console.error('Error fetching deposit history:', error));
+        }
+
+        function fetchWithdrawHistory() {
+            if (!email) return;
+            const formData = new FormData();
+            formData.append('action', 'getWithdrawHistory');
+            formData.append('email', email);
+            fetch(SCRIPT_URL, { method: 'POST', body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        const withdrawHistory = document.getElementById('withdrawHistory');
+                        let html = '<h3>Withdrawal History</h3>';
+                        if (data.withdrawals.length === 0) {
+                            html += '<p>No withdrawals yet.</p>';
+                        } else {
+                            data.withdrawals.forEach(withdrawal => {
+                                const statusClass = withdrawal.status.toLowerCase() === 'pending' ? 'status-pending' : 
+                                                  withdrawal.status.toLowerCase() === 'approved' ? 'status-approved' : 'status-rejected';
+                                html += `
+                                    <div class="history-item">
+                                        <span>Amount:</span> ${withdrawal.amount.toFixed(2)} USDT<br>
+                                        <span>Address:</span> ${withdrawal.address}<br>
+                                        <span>Status:</span> <span class="${statusClass}">${withdrawal.status}</span><br>
+                                        <span>Date:</span> ${new Date(withdrawal.timestamp).toLocaleString()}
+                                    </div>
+                                `;
+                            });
+                        }
+                        withdrawHistory.innerHTML = html;
+                    }
+                })
+                .catch(error => console.error('Error fetching withdraw history:', error));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('header').style.display = 'none';
+            document.getElementById('footerNav').style.display = 'none';
+            showSection('register');
+        });
+    </script>
+</body>
+</html>
